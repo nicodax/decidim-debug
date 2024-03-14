@@ -91,6 +91,8 @@ module Decidim
         given_organization ||= try(:organization)
         organization_locale = given_organization.try(:default_locale)
 
+        Rails.logger.info("attribute pre: #{attribute.to_h}")
+
         attribute[I18n.locale.to_s].presence ||
           machine_translation_value(attribute, given_organization, override_machine_translation_settings) ||
           attribute[organization_locale].presence ||
@@ -106,6 +108,8 @@ module Decidim
       def machine_translation_value(attribute, organization, override_machine_translation_settings = nil)
         return unless organization
         return unless organization.enable_machine_translations?
+
+        Rails.logger.info("attribute post: #{attribute.to_h}")
 
         attribute.dig("machine_translations", I18n.locale.to_s).presence if must_render_translation?(organization, override_machine_translation_settings)
       end
